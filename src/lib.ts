@@ -18,6 +18,7 @@ export interface RenderOptions {
   palette?: PaletteName | string[] | string;
   font?: Fonts | string;
   direction?: 'vertical' | 'horizontal' | 'diagonal';
+  align?: 'left' | 'center' | 'right';
 }
 
 // cfonts upstream fonts / dir: https://github.com/dominikwilkowski/cfonts/tree/released/fonts
@@ -42,6 +43,7 @@ export interface RenderInkOptions {
   letterSpacing?: number;
   lineHeight?: number;
   skipLines?: boolean;
+  align?: 'left' | 'center' | 'right';
 }
 
 export function resolveColors(
@@ -67,17 +69,18 @@ export async function render(
     palette = DEFAULT_PALETTE,
     font = DEFAULT_FONT,
     direction = DEFAULT_DIRECTION,
+    align = 'left',
   } = options;
 
   const paletteColors = resolveColors(palette);
-  return renderLogo(text, paletteColors, font, direction);
+  return renderLogo(text, paletteColors, font, direction, align);
 }
 
 export async function renderFilled(
   text: string,
   options: RenderInkOptions = {}
 ): Promise<void> {
-  const { palette = DEFAULT_PALETTE, font, letterSpacing, lineHeight, skipLines } = options;
+  const { palette = DEFAULT_PALETTE, font, letterSpacing, lineHeight, skipLines, align = 'left' } = options;
 
   // Validate letter spacing
   if (letterSpacing !== undefined && letterSpacing < 0) {
@@ -90,7 +93,7 @@ export async function renderFilled(
   }
 
   const paletteColors = resolveColors(palette);
-  return renderInkLogo(text, paletteColors, { font, letterSpacing, lineHeight, skipLines });
+  return renderInkLogo(text, paletteColors, { font, letterSpacing, lineHeight, skipLines, align });
 }
 
 export {

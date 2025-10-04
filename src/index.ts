@@ -70,6 +70,11 @@ program
     '--skip-lines',
     'Skip every other line in filled mode to create horizontal gaps'
   )
+  .option(
+    '--align <alignment>',
+    'Text alignment: left, center, or right',
+    'left'
+  )
   .option('--reverse-gradient', 'Reverse gradient colors')
   .action(async (text: string | undefined, paletteArg: string, options) => {
     try {
@@ -137,12 +142,14 @@ program
               letterSpacing: options.letterSpacing,
               lineHeight: options.lineHeight,
               skipLines: options.skipLines,
+              align: options.align,
             });
           } else {
             const logo = await render(inputText, {
               palette: paletteColors,
               font: options.font,
               direction: options.direction,
+              align: options.align,
             });
 
             const useColor = shouldUseColor({
@@ -208,6 +215,7 @@ program
           letterSpacing: options.letterSpacing,
           lineHeight: options.lineHeight,
           skipLines: options.skipLines,
+          align: options.align,
         });
       } else {
         // Use figlet for outlined ASCII art
@@ -215,6 +223,7 @@ program
           palette: paletteColors,
           font: options.font,
           direction: options.direction,
+          align: options.align,
         });
 
         const useColor = shouldUseColor({

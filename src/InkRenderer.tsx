@@ -12,6 +12,7 @@ interface LogoProps {
   font?: CFontProps['font'];
   letterSpacing?: number;
   lineHeight?: number;
+  align?: 'left' | 'center' | 'right';
 }
 
 const Logo: React.FC<LogoProps> = ({
@@ -20,12 +21,13 @@ const Logo: React.FC<LogoProps> = ({
   font = 'block',
   letterSpacing,
   lineHeight,
+  align,
 }) => {
   // ink-gradient with custom colors
   if (colors.length > 0) {
     return (
       <Gradient colors={colors}>
-        <BigText text={text} font={font} letterSpacing={letterSpacing} lineHeight={lineHeight} />
+        <BigText text={text} font={font} letterSpacing={letterSpacing} lineHeight={lineHeight} align={align} />
       </Gradient>
     );
   }
@@ -33,7 +35,7 @@ const Logo: React.FC<LogoProps> = ({
   // Default gradient
   return (
     <Gradient name="rainbow">
-      <BigText text={text} font={font} letterSpacing={letterSpacing} lineHeight={lineHeight} />
+      <BigText text={text} font={font} letterSpacing={letterSpacing} lineHeight={lineHeight} align={align} />
     </Gradient>
   );
 };
@@ -41,7 +43,7 @@ const Logo: React.FC<LogoProps> = ({
 export function renderInkLogo(
   text: string,
   palette: string[],
-  options?: { font?: CFontProps['font']; letterSpacing?: number; lineHeight?: number; skipLines?: boolean }
+  options?: { font?: CFontProps['font']; letterSpacing?: number; lineHeight?: number; skipLines?: boolean; align?: 'left' | 'center' | 'right' }
 ): Promise<void> {
   // If skipLines is enabled, use cfonts directly for more control
   if (options?.skipLines) {
@@ -52,6 +54,7 @@ export function renderInkLogo(
         letterSpacing: options?.letterSpacing ?? 1,
         lineHeight: 1,
         space: false,
+        align: options?.align || 'left',
       });
 
       // Check if render was successful
@@ -88,6 +91,7 @@ export function renderInkLogo(
         font={options?.font}
         letterSpacing={options?.letterSpacing}
         lineHeight={options?.lineHeight}
+        align={options?.align}
       />
     );
 
