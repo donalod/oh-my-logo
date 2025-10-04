@@ -22,9 +22,19 @@ node dist/index.js "HELLO" sunset
 # Test filled rendering
 node dist/index.js "LOGO" fire --filled
 
+# Test pixel-gap texture (--skip-lines)
+node dist/index.js "RETRO" code --filled --skip-lines
+
+# Test text alignment
+node dist/index.js "CENTERED" fire --align center
+node dist/index.js "RIGHT" ocean --align right --filled
+
 # Test gradient directions
 node dist/index.js "TEXT" ocean -d horizontal
 node dist/index.js "TEXT" ocean -d diagonal
+
+# Combined features
+node dist/index.js "DEMO" fire --filled --skip-lines --align center
 
 # List all palettes
 node dist/index.js "" --list-palettes
@@ -38,13 +48,14 @@ This is a CLI tool that generates ASCII art logos with gradient colors. There ar
 - **Entry**: `src/renderer.ts` → `renderLogo()`
 - **Tech**: `figlet` + `gradient-string`
 - **Output**: Outlined ASCII characters with gradient colors
-- **Supports**: 3 gradient directions (vertical, horizontal, diagonal)
+- **Supports**: 3 gradient directions (vertical, horizontal, diagonal), text alignment (left, center, right)
 
 ### 2. Filled Block Characters (--filled flag)
 - **Entry**: `src/InkRenderer.tsx` → `renderInkLogo()`
-- **Tech**: React + `ink` + `ink-big-text` + `ink-gradient`
+- **Tech**: React + `ink` + `ink-big-text` + `ink-gradient` (or direct `cfonts` for `--skip-lines`)
 - **Output**: Solid block characters with gradient fills
-- **Supports**: Multi-line text, custom color palettes
+- **Special Mode**: `--skip-lines` uses direct `cfonts` rendering with `gradient-string` to replace █ with ▇ (lower seven-eighths block) for pixel-gap texture
+- **Supports**: Multi-line text, custom color palettes, text alignment, letter spacing, line height
 
 ### Core Components
 
@@ -80,6 +91,20 @@ The `resolvePalette()` function returns a copy `[...palette]` to avoid readonly 
 
 ### Ink Rendering Process
 The Ink renderer uses React components and automatically unmounts after 100ms to allow the process to exit cleanly. This prevents hanging CLI processes.
+
+### Skip-Lines Feature
+When `--skip-lines` is enabled in filled mode, the renderer:
+1. Uses `cfonts.render()` directly instead of `ink-big-text`
+2. Strips ANSI codes from cfonts output
+3. Replaces all solid blocks (█) with lower seven-eighths blocks (▇)
+4. Applies gradient using `gradient-string` instead of `ink-gradient`
+5. Outputs directly to console
+This creates a retro pixel-gap texture effect while preserving border characters (╔ ╗ ║ ═ ╝ ╚).
+
+### Text Alignment
+Both rendering modes support text alignment:
+- **Filled mode**: Uses `cfonts` built-in `align` option
+- **ASCII art mode**: Custom `centerText()` and `rightAlignText()` functions that detect terminal width (`process.stdout.columns`) and add padding while preserving ANSI color codes
 
 ## Environment Variables
 

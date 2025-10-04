@@ -24,6 +24,8 @@ The logos produced by `oh-my-logo` are CC0 (public domain); feel free to use the
 - 🎛️ **Customizable**: Use different fonts and create your own color schemes
 - 🎭 **Shadow Styles**: Customize shadow effects in filled mode with different block fonts
 - 🔄 **Letter Spacing**: For `--filled` mode: character spacing for different visual densities
+- 📏 **Text Alignment**: Center, left, or right-align text in your terminal
+- 🧱 **Pixel-Gap Texture**: Retro-style filled blocks with horizontal gaps (`--skip-lines`)
 - 🔄 **Reverse Gradients**: Flip color palettes for unique effects
 
 ## 🚀 Quick Start
@@ -40,7 +42,28 @@ Want filled characters? Add the `--filled` flag:
 npx oh-my-logo "YOUR LOGO" sunset --filled
 ```
 
-### 🆕 New in v0.3.0
+### 🆕 New Features
+
+**Pixel-gap filled blocks with `--skip-lines`:**
+```bash
+# Create textured blocks with horizontal pixel gaps
+npx oh-my-logo "RETRO" code --filled --skip-lines
+
+# Combines with centering for perfect terminal alignment
+npx oh-my-logo "LOGO" fire --filled --skip-lines --align center
+```
+
+**Text alignment for perfect positioning:**
+```bash
+# Center your logo in the terminal
+npx oh-my-logo "CENTERED" sunset --align center
+
+# Right-align text
+npx oh-my-logo "RIGHT" ocean --align right --filled
+
+# Left-align (default)
+npx oh-my-logo "LEFT" fire --align left
+```
 
 **Customize shadow styles in filled mode:**
 ```bash
@@ -134,13 +157,27 @@ await renderFilled('WIDE', {
   letterSpacing: 3
 });
 
+// Filled with pixel-gap texture
+await renderFilled('RETRO', {
+  palette: 'code',
+  skipLines: true
+});
+
+// Centered filled text with pixel gaps
+await renderFilled('CENTERED', {
+  palette: 'fire',
+  skipLines: true,
+  align: 'center'
+});
+
 // TypeScript usage
 import { render, RenderOptions, PaletteName } from 'oh-my-logo';
 
 const options: RenderOptions = {
   palette: 'ocean' as PaletteName,
   direction: 'vertical',
-  font: 'Standard'
+  font: 'Standard',
+  align: 'center'
 };
 
 const typedLogo = await render('TYPESCRIPT', options);
@@ -165,8 +202,11 @@ console.log('Sunset colors:', PALETTES.sunset);
 | `-f, --font <name>` | Figlet font name | `Standard` |
 | `-d, --direction <dir>` | Gradient direction (`vertical`, `horizontal`, `diagonal`) | `vertical` |
 | `--filled` | Use filled block characters instead of outlined ASCII | `false` |
-| `--block-font <font>` | Font for filled mode (`3d`, `block`, `chrome`, `grid`, `huge`, `pallet`, `shade`, `simple`, `simple3d`, `simpleBlock`, `slick`, `tiny`)
+| `--block-font <font>` | Font for filled mode (`3d`, `block`, `chrome`, `grid`, `huge`, `pallet`, `shade`, `simple`, `simple3d`, `simpleBlock`, `slick`, `tiny`) | `block` |
 | `--letter-spacing <n>` | Letter spacing for filled mode (integer spaces between characters, 0+) | `1` |
+| `--line-height <n>` | Line height for filled mode (adds spacing between rows, 1+) | `1` |
+| `--skip-lines` | Use textured blocks with horizontal pixel gaps (filled mode only) | `false` |
+| `--align <alignment>` | Text alignment (`left`, `center`, `right`) | `left` |
 | `--reverse-gradient` | Reverse gradient colors | `false` |
 | `-l, --list-palettes` | Show all available color palettes | - |
 | `--gallery` | Render text in all available palettes | - |
@@ -222,6 +262,9 @@ npx oh-my-logo "CODE" fire
 
 # Filled block characters
 npx oh-my-logo "CODE" fire --filled
+
+# Filled with textured pixel gaps (retro style)
+npx oh-my-logo "CODE" fire --filled --skip-lines
 
 # Filled with different shadow styles
 npx oh-my-logo "CODE" fire --filled --block-font chrome   # Minimal box shadows
@@ -330,6 +373,35 @@ npx oh-my-logo "LOGO" ocean -d horizontal
 npx oh-my-logo "LOGO" ocean -d diagonal
 ```
 
+### Text Alignment
+
+```bash
+# Center text in terminal
+npx oh-my-logo "CENTERED" fire --align center
+
+# Right-align text
+npx oh-my-logo "RIGHT" ocean --align right
+
+# Left-align (default)
+npx oh-my-logo "LEFT" sunset
+
+# Works with all modes
+npx oh-my-logo "CENTER" code --filled --skip-lines --align center
+```
+
+### Pixel-Gap Textured Blocks
+
+```bash
+# Retro-style textured blocks with horizontal gaps
+npx oh-my-logo "RETRO" code --filled --skip-lines
+
+# Combine with alignment for centered retro logos
+npx oh-my-logo "PIXEL" fire --filled --skip-lines --align center
+
+# Uses lower seven-eighths block (▇) for pixel-perfect gaps
+npx oh-my-logo "CLASSIC" matrix --filled --skip-lines
+```
+
 ### Custom Fonts
 
 ```bash
@@ -399,6 +471,7 @@ async function render(text: string, options?: RenderOptions): Promise<string>
 - **options.palette** (PaletteName | string[]): Color palette name or custom colors
 - **options.font** (string): Figlet font name (default: 'Standard')
 - **options.direction** ('vertical' | 'horizontal' | 'diagonal'): Gradient direction
+- **options.align** ('left' | 'center' | 'right'): Text alignment (default: 'left')
 
 Returns: `Promise<string>` - The colored ASCII art
 
@@ -413,6 +486,9 @@ async function renderFilled(text: string, options?: RenderInkOptions): Promise<v
 - **options.palette** (PaletteName | string[]): Color palette name or custom colors
 - **options.font** (BlockFont): Shadow style ('block' | 'chrome' | 'shade' | 'simpleBlock' | '3d')
 - **options.letterSpacing** (number): Integer number of spaces between characters (0 or greater, default: 1)
+- **options.lineHeight** (number): Line height for vertical spacing (1 or greater, default: 1)
+- **options.skipLines** (boolean): Use textured blocks with pixel gaps (default: false)
+- **options.align** ('left' | 'center' | 'right'): Text alignment (default: 'left')
 
 Returns: `Promise<void>` - Renders directly to stdout
 
@@ -435,16 +511,20 @@ interface RenderOptions {
   palette?: PaletteName | string[];
   font?: string;
   direction?: 'vertical' | 'horizontal' | 'diagonal';
+  align?: 'left' | 'center' | 'right';
 }
 
-type BlockFont = '3d' | 'block' | 'chrome' | 'console' | 'grid' | 
-                 'huge' | 'pallet' | 'shade' | 'simple' | 'simple3d' | 
+type BlockFont = '3d' | 'block' | 'chrome' | 'console' | 'grid' |
+                 'huge' | 'pallet' | 'shade' | 'simple' | 'simple3d' |
                  'simpleBlock' | 'slick' | 'tiny';
 
 interface RenderInkOptions {
   palette?: PaletteName | string[];
   font?: BlockFont;
   letterSpacing?: number;
+  lineHeight?: number;
+  skipLines?: boolean;
+  align?: 'left' | 'center' | 'right';
 }
 ```
 
