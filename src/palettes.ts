@@ -12,6 +12,7 @@ export const PALETTES = {
   mint: ['#00d2ff', '#3a7bd5'],
   coral: ['#ff9a9e', '#fecfef'],
   matrix: ['#00ff41', '#008f11'],
+  code: ['#d57455','#d57455'],
 } as const;
 
 export type PaletteName = keyof typeof PALETTES;

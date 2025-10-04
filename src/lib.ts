@@ -40,6 +40,8 @@ export interface RenderInkOptions {
   palette?: PaletteName | string[] | string;
   font?: BlockFont;
   letterSpacing?: number;
+  lineHeight?: number;
+  skipLines?: boolean;
 }
 
 export function resolveColors(
@@ -75,15 +77,20 @@ export async function renderFilled(
   text: string,
   options: RenderInkOptions = {}
 ): Promise<void> {
-  const { palette = DEFAULT_PALETTE, font, letterSpacing } = options;
+  const { palette = DEFAULT_PALETTE, font, letterSpacing, lineHeight, skipLines } = options;
 
   // Validate letter spacing
   if (letterSpacing !== undefined && letterSpacing < 0) {
     throw new Error('Letter spacing must be 0 or greater');
   }
 
+  // Validate line height
+  if (lineHeight !== undefined && lineHeight < 1) {
+    throw new Error('Line height must be 1 or greater');
+  }
+
   const paletteColors = resolveColors(palette);
-  return renderInkLogo(text, paletteColors, { font, letterSpacing });
+  return renderInkLogo(text, paletteColors, { font, letterSpacing, lineHeight, skipLines });
 }
 
 export {

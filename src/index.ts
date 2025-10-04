@@ -61,6 +61,15 @@ program
     'Letter spacing for filled mode',
     parseInt
   )
+  .option(
+    '--line-height <number>',
+    'Line height for filled mode (adds spacing between rows)',
+    parseInt
+  )
+  .option(
+    '--skip-lines',
+    'Skip every other line in filled mode to create horizontal gaps'
+  )
   .option('--reverse-gradient', 'Reverse gradient colors')
   .action(async (text: string | undefined, paletteArg: string, options) => {
     try {
@@ -114,10 +123,20 @@ program
               throw new InputError('Letter spacing must be 0 or greater');
             }
 
+            // Validate line height
+            if (
+              options.lineHeight !== undefined &&
+              options.lineHeight < 1
+            ) {
+              throw new InputError('Line height must be 1 or greater');
+            }
+
             await renderFilled(inputText, {
               palette: paletteColors,
               font: options.blockFont,
               letterSpacing: options.letterSpacing,
+              lineHeight: options.lineHeight,
+              skipLines: options.skipLines,
             });
           } else {
             const logo = await render(inputText, {
@@ -177,11 +196,18 @@ program
           throw new InputError('Letter spacing must be 0 or greater');
         }
 
+        // Validate line height
+        if (options.lineHeight !== undefined && options.lineHeight < 1) {
+          throw new InputError('Line height must be 1 or greater');
+        }
+
         // Use Ink for filled characters
         await renderFilled(inputText, {
           palette: paletteColors,
           font: options.blockFont,
           letterSpacing: options.letterSpacing,
+          lineHeight: options.lineHeight,
+          skipLines: options.skipLines,
         });
       } else {
         // Use figlet for outlined ASCII art
